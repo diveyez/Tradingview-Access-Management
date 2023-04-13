@@ -14,10 +14,10 @@ class tradingview:
     print('Getting sessionid from db')
     self.sessionid = db["sessionid"] if 'sessionid' in db.keys() else 'abcd'
 
-    headers = {'cookie': 'sessionid=' + self.sessionid}
+    headers = {'cookie': f'sessionid={self.sessionid}'}
     test = requests.request("GET", config.urls["tvcoins"], headers=headers)
     print(test.text)
-    print('sessionid from db : ' + self.sessionid)
+    print(f'sessionid from db : {self.sessionid}')
     if test.status_code != 200:
       print('session id from db is invalid')
       username = os.environ['tvusername']
@@ -25,8 +25,7 @@ class tradingview:
 
       payload = {'username': username, 'password': password, 'remember': 'on'}
       body, contentType = encode_multipart_formdata(payload)
-      userAgent = 'TWAPI/3.0 (' + platform.system() + '; ' + platform.version(
-      ) + '; ' + platform.release() + ')'
+      userAgent = f'TWAPI/3.0 ({platform.system()}; {platform.version()}; {platform.release()})'
       print(userAgent)
       login_headers = {
         'origin': 'https://www.tradingview.com',
@@ -56,9 +55,9 @@ class tradingview:
     user_payload = {'pine_id': pine_id, 'username': username}
 
     user_headers = {
-      'origin': 'https://www.tradingview.com',
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Cookie': 'sessionid=' + self.sessionid
+        'origin': 'https://www.tradingview.com',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': f'sessionid={self.sessionid}',
     }
     print(user_payload)
     usersResponse = requests.post(config.urls['list_users'] +
@@ -110,16 +109,15 @@ class tradingview:
       body, contentType = encode_multipart_formdata(payload)
 
       headers = {
-        'origin': 'https://www.tradingview.com',
-        'Content-Type': contentType,
-        'cookie': 'sessionid=' + self.sessionid
+          'origin': 'https://www.tradingview.com',
+          'Content-Type': contentType,
+          'cookie': f'sessionid={self.sessionid}',
       }
       add_access_response = requests.post(config.urls[enpoint_type],
                                           data=body,
                                           headers=headers)
-      access_details['status'] = 'Success' if (
-        add_access_response.status_code == 200
-        or add_access_response.status_code == 201) else 'Failure'
+      access_details['status'] = ('Success' if add_access_response.status_code
+                                  in {200, 201} else 'Failure')
     return access_details
 
   def remove_access(self, access_details):
@@ -130,9 +128,9 @@ class tradingview:
     body, contentType = encode_multipart_formdata(payload)
 
     headers = {
-      'origin': 'https://www.tradingview.com',
-      'Content-Type': contentType,
-      'cookie': 'sessionid=' + self.sessionid
+        'origin': 'https://www.tradingview.com',
+        'Content-Type': contentType,
+        'cookie': f'sessionid={self.sessionid}',
     }
     remove_access_response = requests.post(config.urls['remove_access'],
                                            data=body,
